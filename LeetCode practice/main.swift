@@ -1936,95 +1936,39 @@ Find Largest Value in Each Tree Row
 //print(copy!)
 //------------------------------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------- Preparation for 2nd try ---------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------- Preparation for 2nd try -----------------------------------------------------------------------------
 
 // MARK: -ArraysAndStrings
 let arraysAndStrings = ArraysAndStrings()
+print("lengthOfLongestSubstring")
 print(arraysAndStrings.lengthOfLongestSubstringBruteForce("pwwkew")) // Answer 3
 print(arraysAndStrings.lengthOfLongestSubstring("pwwkew"))
 print(arraysAndStrings.lengthOfLongestSubstringOptimized("pwwkew"))
 
 //------------------------------------------------------------------------------------------------
 
-print(arraysAndStrings.myAtoi("  0000000000012345678")) // 12345678
-print(arraysAndStrings.myAtoi("   -42")) // -42
-print(arraysAndStrings.myAtoi("4193 with words")) // 4193
-print(arraysAndStrings.myAtoi("words and 987")) // 0
+print("myAtoi")
 print(arraysAndStrings.myAtoi("-91283472332")) // -2147483648
+print(arraysAndStrings.myAtoiDFA("-91283472332")) // -2147483648
+
+print(arraysAndStrings.myAtoi("2147483648")) // 2147483647
+print(arraysAndStrings.myAtoiDFA("2147483648")) // 2147483647
+
 print(arraysAndStrings.myAtoi("+-12")) // 0
-
-
-//------------------------------------------------------------------------------------------------
-
-//  Roman(I, V, X, L, C, D, M) to Integer
-
-//func romanToInt(_ s: String) -> Int {
-//    var ans = 0
-//    let romanToInteger: [Character: Int] = ["I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500,  "M": 1000]
-//    var romanQueue = Array(s.reversed())
-//    while !romanQueue.isEmpty {
-//        let r = romanQueue.removeLast()
-//        if r == "I", let nextR = romanQueue.last, (nextR == "V" || nextR == "X") {
-//            ans += romanToInteger[nextR]! - romanToInteger[r]!
-//            romanQueue.removeLast()
-//        } else if r == "X", let nextR = romanQueue.last, (nextR == "L" || nextR == "C") {
-//            ans += romanToInteger[nextR]! - romanToInteger[r]!
-//            romanQueue.removeLast()
-//        } else if r == "C", let nextR = romanQueue.last, (nextR == "D" || nextR == "M") {
-//            ans += romanToInteger[nextR]! - romanToInteger[r]!
-//            romanQueue.removeLast()
-//        } else {
-//            ans += romanToInteger[r]!
-//        }
-//    }
-//    return ans
-//}
-//
-//print(romanToInt("III")) // 3
-//print(romanToInt("IV")) // 4
-//print(romanToInt("MCMXCIV")) // 1994
+print(arraysAndStrings.myAtoiDFA("+-12")) // 0
 
 //------------------------------------------------------------------------------------------------
 
-// 3Sum
-// Time complexity O(n2) -> Sorting n logN + n2 = n2
-// Space complexity -> depends on the sorting algo (n logN or n)
-// Swift 5 uses the TimSort algorithm for the sorted()
+print("romanToInt")
+print(arraysAndStrings.romanToInt("III")) // 3
+print(arraysAndStrings.romanToInt("IV")) // 4
+print(arraysAndStrings.romanToInt("MCMXCIV")) // 1994
 
-//
-//func threeSum(_ nums: [Int]) -> [[Int]] {
-//    var ans: [[Int]] = []
-//    let sorted = nums.sorted()
-//    for i in 0..<sorted.count {
-//        if i == 0 || sorted[i-1] != sorted[i] {
-//            twoSumII(sorted, i, &ans)
-//        }
-//    }
-//    return ans
-//}
-//
-//func twoSumII(_ nums: [Int], _ i: Int, _ res: inout [[Int]]) {
-//    var lo = i + 1
-//    var hi = nums.count - 1
-//    while lo < hi {
-//        let sum = nums[i] + nums[lo] + nums[hi]
-//        if sum == 0 {
-//            res.append([nums[i], nums[lo], nums[hi]])
-//            lo += 1
-//            hi -= 1
-//            while lo < hi, nums[lo] == nums[lo - 1] {
-//                lo += 1
-//            }
-//        } else if sum > 0 {
-//            hi -= 1
-//        } else if sum < 0 {
-//            lo += 1
-//        }
-//    }
-//}
-//
-//print(threeSum([-1,0,1,2,-1,-4]))
-//print(threeSum([12,-14,-5,12,-2,9,0,9,-3,-3,-14,-6,-4,13,-11,-8,0,5,-7,-6,-10,-13,-7,-14,-3,0,12,5,-8,7,3,-11,0,6,9,13,-8,-6,7,4,6,0,13,-13,-1,9,-13,6,-1,-13,-15,-4,-11,-15,-11,-7,1,-14,13,8,0,2,4,-15,-15,-2,5,-8,7,-11,11,-10,4,1,-15,10,-5,-13,2,1,11,-6,4,-15,-5,8,-7,3,1,-9,-4,-14,0,-15,8,0,-1,-2,7,13,2,-5,11,13,11,11]))
+//------------------------------------------------------------------------------------------------
+
+
+print(threeSum([-1,0,1,2,-1,-4]))
+print(threeSum([12,-14,-5,12,-2,9,0,9,-3,-3,-14,-6,-4,13,-11,-8,0,5,-7,-6,-10,-13,-7,-14,-3,0,12,5,-8,7,3,-11,0,6,9,13,-8,-6,7,4,6,0,13,-13,-1,9,-13,6,-1,-13,-15,-4,-11,-15,-11,-7,1,-14,13,8,0,2,4,-15,-15,-2,5,-8,7,-11,11,-10,4,1,-15,10,-5,-13,2,1,11,-6,4,-15,-5,8,-7,3,1,-9,-4,-14,0,-15,8,0,-1,-2,7,13,2,-5,11,13,11,11]))
 
 
 //------------------------------------------------------------------------------------------------

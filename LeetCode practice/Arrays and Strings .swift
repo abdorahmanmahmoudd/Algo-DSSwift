@@ -84,6 +84,9 @@ final class ArraysAndStrings {
     }
     
     // MARK: -String to Integer (atoi) - Medium
+    // This brute force approach is sufficient for interviews
+    // Time complexity O(n)
+    // Space complexity O(1)
     func myAtoi(_ s: String) -> Int {
         let a = Array(s)
         var doubleAns: Double = 0
@@ -113,6 +116,150 @@ final class ArraysAndStrings {
             return Int(Int32.max)
         }
         return Int(doubleAns)
+    }
+    
+    // Another approach using the Deterministic Finite Automaton (DFA) -> for readability and maintainability
+    enum State {
+        case q0, q1, q2, qd
+    }
+    
+    class StateMachine {
+        var currentState: State = .q0
+        var result: Int = 0
+        var sign = 1
+        
+        func toStateQ1(char: Character) {
+            sign = (char == "-") ? -1 : 1
+            currentState = .q1
+        }
+        
+        func toStateQ2(digit: Int) {
+            currentState = .q2
+            appendDigit(digit)
+        }
+        
+        func toStateQd() {
+            currentState = .qd
+        }
+        
+        func appendDigit(_ digit: Int) {
+            if result > Int32.max / 10 || (result == Int32.max / 10 && digit > Int32.max % 10) {
+                if sign == 1 {
+                    result = Int(Int32.max)
+                } else {
+                    result = Int(Int32.min)
+                    sign = 1
+                }
+                toStateQd()
+            } else {
+                result = result * 10 + digit
+            }
+        }
+        
+        func isDigit(char: Character) -> Bool {
+            return Int(String(char)) != nil
+        }
+        
+        func transition(char: Character) {
+            if currentState == .q0 {
+                if char == " " {
+                    return
+                } else if char == "-" || char == "+" {
+                    toStateQ1(char: char)
+                } else if isDigit(char: char) {
+                    toStateQ2(digit: Int(String(char))!)
+                } else {
+                    toStateQd()
+                }
+            } else if currentState == .q1 || currentState == .q2 {
+                if isDigit(char: char) {
+                    toStateQ2(digit: Int(String(char))!)
+                } else {
+                    toStateQd()
+                }
+            }
+        }
+        
+        func getResult() -> Int {
+            return result * sign
+        }
+        
+        func getState() -> State {
+            return currentState
+        }
+    }
+    
+    func myAtoiDFA(_ s: String) -> Int {
+        let a = Array(s)
+        let stateMachine = StateMachine()
+        for i in stride(from: 0, to: a.count, by: 1) {
+            if stateMachine.getState() == .qd {
+                break
+            }
+            stateMachine.transition(char: a[i])
+        }
+        return stateMachine.getResult()
+    }
+    
+    // MARK: -Roman to Integer - Easy
+
+    func romanToInt(_ s: String) -> Int {
+        var ans = 0
+        let romanToInteger: [Character: Int] = ["I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500,  "M": 1000]
+        var romanQueue = Array(s.reversed())
+        while !romanQueue.isEmpty {
+            let r = romanQueue.removeLast()
+            if r == "I", let nextR = romanQueue.last, (nextR == "V" || nextR == "X") {
+                ans += romanToInteger[nextR]! - romanToInteger[r]!
+                romanQueue.removeLast()
+            } else if r == "X", let nextR = romanQueue.last, (nextR == "L" || nextR == "C") {
+                ans += romanToInteger[nextR]! - romanToInteger[r]!
+                romanQueue.removeLast()
+            } else if r == "C", let nextR = romanQueue.last, (nextR == "D" || nextR == "M") {
+                ans += romanToInteger[nextR]! - romanToInteger[r]!
+                romanQueue.removeLast()
+            } else {
+                ans += romanToInteger[r]!
+            }
+        }
+        return ans
+    }
+    
+    // MARK: -3Sum -
+    // Time complexity O(n2) -> Sorting n logN + n2 = n2
+    // Space complexity -> depends on the sorting algo (n logN or n)
+    // Swift 5 uses the TimSort algorithm for the sorted()
+
+    
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        var ans: [[Int]] = []
+        let sorted = nums.sorted()
+        for i in 0..<sorted.count {
+            if i == 0 || sorted[i-1] != sorted[i] {
+                twoSumII(sorted, i, &ans)
+            }
+        }
+        return ans
+    }
+    
+    func twoSumII(_ nums: [Int], _ i: Int, _ res: inout [[Int]]) {
+        var lo = i + 1
+        var hi = nums.count - 1
+        while lo < hi {
+            let sum = nums[i] + nums[lo] + nums[hi]
+            if sum == 0 {
+                res.append([nums[i], nums[lo], nums[hi]])
+                lo += 1
+                hi -= 1
+                while lo < hi, nums[lo] == nums[lo - 1] {
+                    lo += 1
+                }
+            } else if sum > 0 {
+                hi -= 1
+            } else if sum < 0 {
+                lo += 1
+            }
+        }
     }
     
 }
