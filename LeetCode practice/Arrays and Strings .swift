@@ -262,4 +262,19 @@ final class ArraysAndStrings {
         }
     }
     
+    // MARK: - Rotate Image
+    // Time complexity O(N) ->
+    // Space complexity -> O(1)
+    func rotate(_ matrix: inout [[Int]]) {
+        let n = matrix.count
+        for i in stride(from: 0, to: (n + 1) / 2, by: 1) {
+            for j in stride(from: 0, to: n / 2, by: 1) {
+                let temp = matrix[n - 1 - j][i]
+                matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j]
+                matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i]
+                matrix[j][n - 1 - i] = matrix[i][j]
+                matrix[i][j] = temp
+            }
+        }
+    }
 }
