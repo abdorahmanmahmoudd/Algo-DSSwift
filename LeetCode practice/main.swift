@@ -2117,3 +2117,184 @@ print(image)
 
 
 //------------------------------------------------------------------------------------------------
+
+// MARK: - Amazon Assessment
+func processLogs(logs: [String], threshold: Int) -> [String] {
+    var counter: [String: Int] = [:]
+    for log in logs {
+        let components = log.components(separatedBy: " ")
+        let sender = components[0]
+        let receiver  = components[1]
+        
+        if counter[sender] == nil {
+            counter[sender] = 1
+        } else {
+            counter[sender]! += 1
+        }
+        
+        if sender != receiver {
+            if counter[receiver] == nil {
+                counter[receiver] = 1
+            } else {
+                counter[receiver]! += 1
+            }
+        }
+    }
+    
+    let resultInt = counter.filter({ $0.value >= threshold }).map{  Int32($0.key)! }.sorted(by: <)
+    return resultInt.map({"\($0)"})
+}
+print("processLogs")
+print(processLogs(logs: ["1 2 50", "1 7 70", "1 3 20", "2 2 17"], threshold: 2))
+
+
+func numberOfItems(s: String, startIndices: [Int], endIndices: [Int]) -> [Int] {
+    var ans = [Int]()
+    let arr = Array(s)
+    let n = arr.count
+    var dp = Array.init(repeating: 0, count: n)
+    var count = 0
+    
+    for i in 0..<n {
+        if arr[i] == "|" {
+            dp[i] = count
+        } else {
+            count += 1
+        }
+    }
+    for i in 0..<startIndices.count {
+        var start = startIndices[i] - 1
+        var end = endIndices[i] - 1
+
+        while arr[start] != "|" {
+            start += 1
+        }
+        while arr[end] != "|" {
+            end -= 1
+        }
+        if (start < end) {
+            ans.append(dp[end] - dp[start])
+        } else {
+            ans.append(0)
+        }
+    }
+    return ans
+}
+
+print("numberOfItems")
+print(numberOfItems(s: "*|*|*|", startIndices: [1], endIndices: [6])) // 2
+
+
+func minimalHeaviestSetA(arr: [Int]) -> [Int] {
+    
+    var ans = [Int]()
+    let sorted = arr.sorted(by: <)
+    var sum = 0
+    sorted.forEach({ sum += $0 })
+    var s = 0
+
+    for i in stride(from: sorted.count - 1, to: 0-1, by: -1) {
+        s += sorted[i]
+        ans.append(sorted[i])
+        
+        if sum - s < s {
+            break
+        }
+    }
+    ans.sort()
+    return ans
+}
+
+print("minimalHeaviestSetA")
+print(minimalHeaviestSetA(arr: [5,3,2,4,1,2]))
+
+//------------------------------------------------------------------------------------------------
+
+//time O(n), space O(n)
+func findTotalPower(power: [Int]) -> Int {
+    let MOD = 1000000007
+    let n = power.count
+    let pOfP = prefixOfPrefixSum(arr: power, n: n)
+    let leftSmaller = prevSmaller(arr: power, n: n)
+    let rightSmallerOrEqual = nextSmallerOrEqual(arr: power, n: n)
+    
+    var res = 0
+    for i in 0..<n {
+        let left = leftSmaller[i]
+        let right = rightSmallerOrEqual[i]
+        var val = (i-left)*(pOfP[right-1+1]-pOfP[i-1+1])%MOD + MOD - (right-i)*(pOfP[i-1+1]-pOfP[left-1+1<0 ? 0 : left-1+1])%MOD
+        val = (power[i]*val)%MOD
+        res += val
+        res %= MOD
+    }
+    return res
+}
+//prefix sum of prefix sum
+func prefixOfPrefixSum(arr: [Int], n: Int) -> [Int] {
+    var res = Array(repeating: 0, count: n+1)
+    var sum = 0
+    res[0] = 0
+    for i in 1...n {
+        sum += arr[i-1]
+        sum %= 1000000007
+        res[i] = (res[i-1]+sum)%1000000007
+    }
+    return res
+}
+            
+func prevSmaller(arr: [Int], n: Int) -> [Int] {
+    var res = Array(repeating: 0, count: n)
+    var st = [Int]()
+    res[0] = 0
+    for i in 0..<n {
+        while !st.isEmpty && arr[st.last!] >= arr[i] {
+            _ = st.popLast()
+        }
+        res[i] = st.isEmpty ? -1 : st.last!
+        st.append(i)
+    }
+    return res
+}
+
+func nextSmallerOrEqual(arr: [Int], n: Int) -> [Int] {
+    var res = Array(repeating: 0, count: n)
+    var st = [Int]()
+    res[0] = 0
+    for i in stride(from: n-1, to: 0-1, by: -1) {
+        while !st.isEmpty && arr[st.last!] > arr[i] {
+            _ = st.popLast()
+        }
+        res[i] = st.isEmpty ? n : st.last!
+        st.append(i)
+    }
+    return res
+}
+
+print("findTotalPower")
+print(findTotalPower(power: [2,1,3]))
+
+
+func getMinMoves(plates: [Int]) -> Int {
+    let n = plates.count
+    var minSeen = Array(repeating: 0, count: n)
+    minSeen[n - 1] = plates[n - 1];
+
+    for i in stride(from: n - 2, to: 0-1, by: -1) {
+        minSeen[i] = min(minSeen[i+1], plates[i])
+    }
+    var count = 0
+    var maxMoved = Int.max
+    for i in 0..<n {
+        if plates[i] > maxMoved { // if moved Higher number before then need to move
+            count += 1
+            
+        } else if plates[i] > minSeen[i] { // if there is lower number after then need to move
+            count += 1
+            maxMoved = plates[i]
+        }
+    }
+    return count
+}
+
+print("getMinMoves")
+print(getMinMoves(plates: [2,4, 3,1,6]))
